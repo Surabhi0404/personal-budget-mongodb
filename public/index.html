@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="./main.css">
 </head>
 <body>
+
+    
+
     <!-- This is a Semantic HTML Change -->
     <!--Added header-->
     <header>
@@ -114,12 +117,20 @@
                 </div>
 
                 <div class="text-box">
-                    <h1>Chart</h1>
+                    <h1>ChartJS</h1>
                     <p>
                         <canvas id="myChart" width="400" height="400"></canvas>
                     </p>
                 </div>
-            </div>
+
+                <div class="text-box">
+                    <h1>ChartD3JS</h1>
+                    <p>
+                        <svg width="400" height="250"> </svg>
+                    </p>
+                </div>
+                
+             </div>
 
             <!-- This is an A11y Change -->
             <h2>Search: <input type="text" aria-label="search"></h2>
@@ -139,7 +150,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
-
+    <script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
         var dataSource = {
             datasets: [
@@ -150,10 +161,10 @@
                         '#ff6384',
                         '#36a2eb',
                         '#fd6b19',
-                        'Green',
-                        'Blue',
-                        'Pink',
-                        'Purple'
+                        '#9A7D0A',
+                        '#27AE60',
+                        '#D0D3D4',
+                        '#34495E'
 
                     ],
                 }
@@ -172,18 +183,102 @@
         function getBudget(){
             axios.get('/budget')
             .then(function (res){
-                console.log(res);
+                //console.log(res);
                 for (var i = 0 ; i < res.data.myBudget.length; i++) {
                     dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
                     dataSource.labels[i] = res.data.myBudget[i].title;
                 }
                 createChart();
             });
-        }
+        }        
 
         getBudget();
-    </script>
 
+        var data=[];
+        var labelText=[];
+        function getD3Chart(){
+            axios.get('/budget')
+            .then(function(res){
+                for (var i = 0 ; i < res.data.myBudget.length; i++) {
+                     data[i] = res.data.myBudget[i].budget;
+                     labelText[i] = res.data.myBudget[i].title;
+                }
+                console.log(data);
+
+                var svg = d3.select("svg"),
+                width = svg.attr("width"),
+                height = svg.attr("height"),
+                radius = Math.min(width, height) / 2,
+                g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+                var color = d3.scaleOrdinal(['#4daf4a','#377eb8','#ff7f00','#984ea3','#e41a1c', '#A3E4D7', '#F1C40F', '#1B4F72']);
+
+                // Generate the pie
+                var pie = d3.pie();
+
+                // Generate the arcs
+                var arc = d3.arc()
+                            .innerRadius(0)
+                            .outerRadius(radius);
+
+                //Generate groups
+                var arcs = g.selectAll("arc")
+                            .data(pie(data))
+                            .enter()
+                            .append("g")
+                            .attr("class", "arc")
+
+               
+                //Draw arc paths
+                arcs.append("path")
+                    .attr("fill", function(d, i) {
+                        return color(i);
+                    })
+                    .attr("d", arc);
+
+                   
+
+                    // arcs.append("text")
+                    // .attr("transform", function(d){
+                    //     d.innerRadius = radius;
+                    //     d.outerRadius = radius - 80;
+                    //     return "translate(" + arc.centroid(d) + ")";
+                    //     })
+                    //     .attr("text-anchor", "middle")
+                    //     .text( function(d, i) {
+                    //     return labelText[i];})
+
+
+                        var legendG = svg.selectAll(".legend") // 
+                            .data(pie(data))
+                            .enter().append("g")
+                            .attr("transform", function(d,i){
+                                return "translate(" + (width - 70) + "," + (i * 15 + 20) + ")"; // place each legend on the right and bump each one down 15 pixels
+                            })
+                            .attr("class", "legend");   
+
+                            legendG.append("rect") // make a matching color rect
+                            .attr("width", 10)
+                            .attr("height", 10)
+                            .attr("fill", function(d, i) {
+                                return color(i);
+                            });
+
+                            legendG.append("text") // add the text
+                            .text(function(d,i){
+                                return labelText[i];
+                            })
+                            .style("font-size", 12)
+                            .attr("y", 10)
+                            .attr("x", 11);
+                                              
+                   
+                    })
+
+                }
+
+                getD3Chart();
+    </script>
 
 </body>
 </html>
