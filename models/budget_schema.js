@@ -8,7 +8,6 @@ const budgetSchema = new mongoose.Schema({
     },
     value: {
         type: Number,
-        trim: true,
         required: true,
     },
     color: {
@@ -23,7 +22,7 @@ const budgetSchema = new mongoose.Schema({
 
 function colorValidator (v) {
     if (v.indexOf('#') == 0) {
-        if (v.length == 7) {  // #f0f0f0
+        if (v.length == 7) {
             return true;
         }
     }

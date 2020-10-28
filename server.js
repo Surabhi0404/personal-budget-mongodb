@@ -30,7 +30,7 @@ app.get('/budget', (req, res) => {
     })
 });
 
-app.post('/budget/insert', (req, res) => {
+app.post('/budget/add', (req, res) => {
     mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true})
     .then(()=>{
         console.log("Connected to the database");
