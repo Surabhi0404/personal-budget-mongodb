@@ -157,15 +157,6 @@
                 {
                     data: [],
                     backgroundColor: [
-                        '#ffcd56',
-                        '#ff6384',
-                        '#36a2eb',
-                        '#fd6b19',
-                        '#9A7D0A',
-                        '#27AE60',
-                        '#D0D3D4',
-                        '#34495E'
-
                     ],
                 }
             ],
@@ -183,10 +174,10 @@
         function getBudget(){
             axios.get('http://localhost:3000/budget')
             .then(function (res){
-                //console.log(res);
-                for (var i = 0 ; i < res.data.myBudget.length; i++) {
-                    dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
-                    dataSource.labels[i] = res.data.myBudget[i].title;
+                for (var i = 0 ; i < res.data.length; i++) {
+                    dataSource.datasets[0].data[i] = res.data[i].value;
+                    dataSource.labels[i] = res.data[i].title;
+                    dataSource.datasets[0].backgroundColor[i] = res.data[i].color;
                 }
                 createChart();
             });
@@ -196,12 +187,14 @@
 
         var data=[];
         var labelText=[];
+        var colorData=[];
         function getD3Chart(){
             axios.get('http://localhost:3000/budget')
             .then(function(res){
-                for (var i = 0 ; i < res.data.myBudget.length; i++) {
-                     data[i] = res.data.myBudget[i].budget;
-                     labelText[i] = res.data.myBudget[i].title;
+                for (var i = 0 ; i < res.data.length; i++) {
+                     data[i] = res.data[i].value;
+                     labelText[i] = res.data[i].title;
+                     colorData[i] = res.data[i].color;
                 }
                 console.log(data);
 
@@ -211,7 +204,7 @@
                 radius = Math.min(width, height) / 2,
                 g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-                var color = d3.scaleOrdinal(['#4daf4a','#377eb8','#ff7f00','#984ea3','#e41a1c', '#A3E4D7', '#F1C40F', '#1B4F72']);
+                var color = d3.scaleOrdinal(colorData);
 
                 // Generate the pie
                 var pie = d3.pie();
