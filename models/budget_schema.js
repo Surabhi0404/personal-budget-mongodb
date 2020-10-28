@@ -4,9 +4,7 @@ const budgetSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        unique: true,
         trim: true
-
     },
     value: {
         type: Number,
@@ -15,6 +13,7 @@ const budgetSchema = new mongoose.Schema({
     },
     color: {
         type: String,
+        unique: true,
         minlength: 6,
         validate: [colorValidator, 'not a valid color'],
         required: true

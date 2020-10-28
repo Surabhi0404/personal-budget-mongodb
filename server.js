@@ -34,12 +34,13 @@ app.post('/budget/insert', (req, res) => {
     mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true})
     .then(()=>{
         console.log("Connected to the database");
-        let postData = new budgetModel({
-            title: req.body.title,
-            value: req.body.value,
-            color: req.body.color
-        });
-        budgetModel.insertMany(postData)
+        let postData = {$set:{
+                title: req.body.title,
+                value: req.body.value,
+                color: req.body.color
+            }
+        }
+        budgetModel.update({title: req.body.title}, postData, {upsert: true})
             .then((data)=>{
                 res.json(data);
                 mongoose.connection.close();
