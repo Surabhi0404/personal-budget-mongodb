@@ -18,17 +18,17 @@ app.get('/budget', (req, res) => {
     .then(()=>{
         budgetModel.find({})
         .then((data)=>{
-            res.json(data);
+            res.status(200).json(data);
             mongoose.connection.close();
         })
         .catch((connectionError)=>{
             console.log(connectionError);
-            res.status("200").json(connectionError)
+            res.status("400").json(connectionError)
         })
     })
     .catch((connectionError)=>{
         console.log(connectionError);
-        res.status("200").json(connectionError)
+        res.status("400").json(connectionError)
     })
 });
 
@@ -44,17 +44,17 @@ app.post('/budget/add', (req, res) => {
         }
         budgetModel.update({title: req.body.title}, postData, {upsert: true})
             .then((data)=>{
-                res.json(data);
+                res.status(200).json(data);
                 mongoose.connection.close();
             })
             .catch((connectionError)=>{
                 console.log(connectionError);
-                res.status("200").json(connectionError)
+                res.status("400").json(connectionError)
             })
     })
     .catch((connectionError)=>{
         console.log(connectionError);
-        res.status("200").json(connectionError)
+        res.status("400").json(connectionError)
     })
     
 });
