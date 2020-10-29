@@ -18,8 +18,8 @@ app.get('/budget', (req, res) => {
     .then(()=>{
         budgetModel.find({})
         .then((data)=>{
-            res.status(200).json(data);
             mongoose.connection.close();
+            res.status(200).json(data);            
         })
         .catch((connectionError)=>{
             console.log(connectionError);
@@ -35,7 +35,6 @@ app.get('/budget', (req, res) => {
 app.post('/budget/add', (req, res) => {
     mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true})
     .then(()=>{
-        console.log("Connected to the database");
         let postData = {$set:{
                 title: req.body.title,
                 value: req.body.value,
@@ -44,8 +43,8 @@ app.post('/budget/add', (req, res) => {
         }
         budgetModel.update({title: req.body.title}, postData, {upsert: true})
             .then((data)=>{
-                res.status(200).json(data);
                 mongoose.connection.close();
+                res.status(200).json(data);
             })
             .catch((connectionError)=>{
                 console.log(connectionError);
