@@ -23,10 +23,12 @@ app.get('/budget', (req, res) => {
         })
         .catch((connectionError)=>{
             console.log(connectionError);
+            res.status("200").json(connectionError)
         })
     })
     .catch((connectionError)=>{
         console.log(connectionError);
+        res.status("200").json(connectionError)
     })
 });
 
@@ -46,12 +48,13 @@ app.post('/budget/add', (req, res) => {
                 mongoose.connection.close();
             })
             .catch((connectionError)=>{
-                res.json(connectionError);
                 console.log(connectionError);
+                res.status("200").json(connectionError)
             })
     })
     .catch((connectionError)=>{
         console.log(connectionError);
+        res.status("200").json(connectionError)
     })
     
 });
